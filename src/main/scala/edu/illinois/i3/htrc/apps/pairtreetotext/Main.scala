@@ -8,6 +8,8 @@ import org.rogach.scallop.ScallopConf
 import scala.io.{Codec, StdIn}
 import HTRCPairtreeToText._
 
+import scala.util.{Failure, Success}
+
 /**
   * PairtreeToText
   *
@@ -35,10 +37,13 @@ object Main extends App {
 
   // process all the supplied HT IDs in parallel (remove ".par" below if you want sequential processing)
   for (htid <- htids.par) {
-    val (pairtreeDoc, volTxt) = pairtreeToText(htid, pairtreeRootPath, isCleanId)
-    val volTxtFile = new File(outputPath, s"${pairtreeDoc.getCleanId}.txt")
+    pairtreeToText(htid, pairtreeRootPath, isCleanId) match {
+      case Success((pairtreeDoc, volTxt)) =>
+        val volTxtFile = new File(outputPath, s"${pairtreeDoc.getCleanId}.txt")
+        Files.write(volTxtFile.toPath, volTxt.getBytes(codec.charSet))
 
-    Files.write(volTxtFile.toPath, volTxt.getBytes(codec.charSet))
+      case Failure(e) => println("Error: " + e.getMessage)
+    }
   }
 }
 

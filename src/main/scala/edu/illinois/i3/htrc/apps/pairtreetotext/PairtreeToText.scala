@@ -2,11 +2,13 @@ package edu.illinois.i3.htrc.apps.pairtreetotext
 
 import java.io.File
 import java.util.zip.ZipFile
+
 import edu.illinois.i3.htrc.tools.PairtreeHelper
 import edu.illinois.i3.htrc.tools.PairtreeHelper.PairtreeDocument
 import resource._
 
 import scala.io.Codec
+import scala.util.{Success, Try}
 import scala.xml.XML
 
 trait PairtreeToText {
@@ -18,7 +20,7 @@ trait PairtreeToText {
     * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return A pair representing the volume and its textual content
     */
-  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): (PairtreeDocument, String)
+  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)]
 
   /**
     * Retrieve full text (concatenated pages) from HT volume
@@ -26,7 +28,7 @@ trait PairtreeToText {
     * @param volZipFile The volume ZIP file
     * @return A pair representing the volume and its textual content
     */
-  def pairtreeToText(volZipFile: File): (PairtreeDocument, String)
+  def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)]
 
   /**
     * Retrieve full text (concatenated pages) from HT volume
@@ -38,7 +40,7 @@ trait PairtreeToText {
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
     * @return A pair representing the volume and its textual content
     */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): (PairtreeDocument, String)
+  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)]
 
   /**
     * Retrieve the correct page sequence from METS
@@ -71,22 +73,27 @@ object HTRCPairtreeToText extends PairtreeToText {
     * @param volZipFile The volume ZIP file
     * @return A pair representing the volume and its textual content
     */
-  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): (PairtreeDocument, String) = {
-    val metsXml = XML.loadFile(metsXmlFile)
-    val pairtreeDoc = PairtreeHelper.parse(volZipFile)
-    val volZip = new ZipFile(volZipFile, codec.charSet)
-    val pageZipEntries = getPageSeq(metsXml).map(f => s"${pairtreeDoc.getCleanIdWithoutLibId}/$f").map(volZip.getEntry)
-    val uncompressedTextSize = pageZipEntries.foldLeft(0)((acc, ze) => acc + ze.getSize.toInt)
-    val volTextBuilder = new StringBuilder(uncompressedTextSize)
-    for (pageZipEntry <- pageZipEntries) {
-      for (pageStream <- managed(io.Source.fromInputStream(volZip.getInputStream(pageZipEntry)))) {
-        volTextBuilder.append(pageStream.mkString)
-      }
+  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)] = {
+    val metsXml = Try(XML.loadFile(metsXmlFile))
+    val volZip = Try(new ZipFile(volZipFile, codec.charSet))
+
+    (metsXml, volZip) match {
+      case (Success(metsXml), Success(volZip)) =>
+        val pairtreeDoc = PairtreeHelper.parse(volZipFile)
+        val pageZipEntries = getPageSeq(metsXml).map(f => s"${pairtreeDoc.getCleanIdWithoutLibId}/$f").map(volZip.getEntry)
+        val uncompressedTextSize = pageZipEntries.foldLeft(0)((acc, ze) => acc + ze.getSize.toInt)
+        val volTextBuilder = new StringBuilder(uncompressedTextSize)
+        for (pageZipEntry <- pageZipEntries) {
+          for (pageStream <- managed(io.Source.fromInputStream(volZip.getInputStream(pageZipEntry)))) {
+            volTextBuilder.append(pageStream.mkString)
+          }
+        }
+
+        val volTxt = volTextBuilder.toString()
+        Success(pairtreeDoc -> volTxt)
+
+      case _ => List(metsXml, volZip).filter(_.isFailure).head.asInstanceOf[Try[(PairtreeDocument, String)]]
     }
-
-    val volTxt = volTextBuilder.toString()
-
-    pairtreeDoc -> volTxt
   }
 
   /**
@@ -95,7 +102,7 @@ object HTRCPairtreeToText extends PairtreeToText {
     * @param volZipFile The volume ZIP file
     * @return A pair representing the volume and its textual content
     */
-  def pairtreeToText(volZipFile: File): (PairtreeDocument, String) = {
+  def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)] = {
     val pairtreeDoc = PairtreeHelper.parse(volZipFile)
     val metsXmlFile = new File(volZipFile.getParentFile, s"${pairtreeDoc.getCleanIdWithoutLibId}.mets.xml")
     pairtreeToText(metsXmlFile, volZipFile)
@@ -111,7 +118,7 @@ object HTRCPairtreeToText extends PairtreeToText {
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
     * @return A pair representing the volume and its textual content
     */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): (PairtreeDocument, String) = {
+  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)] = {
     val ppath = if (isCleanId) PairtreeHelper.getPathFromCleanId(htid) else PairtreeHelper.getPathFromUncleanId(htid)
     val volRootPath = new File(pairtreeRootPath, ppath)
     val id = volRootPath.getName
