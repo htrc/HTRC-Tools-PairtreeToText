@@ -43,17 +43,17 @@ The list of API methods available:
     * @param metsXmlFile The METS file describing the volume (and its page ordering)
     * @param volZipFile The volume ZIP file
     * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
-  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): (PairtreeDocument, String)
+  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)]
 
   /**
     * Retrieve full text (concatenated pages) from HT volume
     *
     * @param volZipFile The volume ZIP file
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
-  def pairtreeToText(volZipFile: File): (PairtreeDocument, String)
+  def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)]
 
   /**
     * Retrieve full text (concatenated pages) from HT volume
@@ -63,9 +63,9 @@ The list of API methods available:
     *                         for example for a volume ID mdp.39015039688257, the corresponding volume ZIP file is:<br>
     *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): (PairtreeDocument, String)
+  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)]
 
   /**
     * Retrieve the correct page sequence from METS

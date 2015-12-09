@@ -11,7 +11,7 @@ lazy val pairtree_to_text = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "pairtree-to-text",
-    version := "1.0-SNAPSHOT",
+    version := "1.1-SNAPSHOT",
     libraryDependencies ++= Seq(
         "org.rogach"                    %% "scallop"              % "0.9.5",
         "org.scala-lang.modules"        %% "scala-xml"            % "1.0.5",

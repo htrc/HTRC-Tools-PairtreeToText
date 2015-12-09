@@ -18,7 +18,7 @@ trait PairtreeToText {
     * @param metsXmlFile The METS file describing the volume (and its page ordering)
     * @param volZipFile The volume ZIP file
     * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)]
 
@@ -26,7 +26,7 @@ trait PairtreeToText {
     * Retrieve full text (concatenated pages) from HT volume
     *
     * @param volZipFile The volume ZIP file
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)]
 
@@ -38,7 +38,7 @@ trait PairtreeToText {
     *                         for example for a volume ID mdp.39015039688257, the corresponding volume ZIP file is:<br>
     *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)]
 
@@ -71,13 +71,13 @@ object HTRCPairtreeToText extends PairtreeToText {
     *
     * @param metsXmlFile The METS file describing the volume (and its page ordering)
     * @param volZipFile The volume ZIP file
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)] = {
-    val metsXml = Try(XML.loadFile(metsXmlFile))
-    val volZip = Try(new ZipFile(volZipFile, codec.charSet))
+    val metsXmlTry = Try(XML.loadFile(metsXmlFile))
+    val volZipTry = Try(new ZipFile(volZipFile, codec.charSet))
 
-    (metsXml, volZip) match {
+    (metsXmlTry, volZipTry) match {
       case (Success(metsXml), Success(volZip)) =>
         val pairtreeDoc = PairtreeHelper.parse(volZipFile)
         val pageZipEntries = getPageSeq(metsXml).map(f => s"${pairtreeDoc.getCleanIdWithoutLibId}/$f").map(volZip.getEntry)
@@ -92,7 +92,7 @@ object HTRCPairtreeToText extends PairtreeToText {
         val volTxt = volTextBuilder.toString()
         Success(pairtreeDoc -> volTxt)
 
-      case _ => List(metsXml, volZip).filter(_.isFailure).head.asInstanceOf[Try[(PairtreeDocument, String)]]
+      case _ => List(metsXmlTry, volZipTry).filter(_.isFailure).head.asInstanceOf[Try[(PairtreeDocument, String)]]
     }
   }
 
@@ -100,7 +100,7 @@ object HTRCPairtreeToText extends PairtreeToText {
     * Retrieve full text (concatenated pages) from HT volume
     *
     * @param volZipFile The volume ZIP file
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)] = {
     val pairtreeDoc = PairtreeHelper.parse(volZipFile)
@@ -116,7 +116,7 @@ object HTRCPairtreeToText extends PairtreeToText {
     *                         for example for a volume ID mdp.39015039688257, the corresponding volume ZIP file is:<br>
     *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
-    * @return A pair representing the volume and its textual content
+    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)] = {
     val ppath = if (isCleanId) PairtreeHelper.getPathFromCleanId(htid) else PairtreeHelper.getPathFromUncleanId(htid)
