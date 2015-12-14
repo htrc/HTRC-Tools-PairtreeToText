@@ -42,7 +42,7 @@ object Main extends App {
         val volTxtFile = new File(outputPath, s"${pairtreeDoc.getCleanId}.txt")
         Files.write(volTxtFile.toPath, volTxt.getBytes(codec.charSet))
 
-      case Failure(e) => println("Error: " + e.getMessage)
+      case Failure(e) => scala.Console.err.println(s"Error ($htid): ${e.getMessage}")
     }
   }
 }
