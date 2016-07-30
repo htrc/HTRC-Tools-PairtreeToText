@@ -1,8 +1,16 @@
 lazy val commonSettings = Seq(
   organization := "edu.illinois.i3.htrc.apps",
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.11.8",
   scalacOptions ++= Seq("-feature", "-language:postfixOps", "-target:jvm-1.8"),
-  resolvers += "I3 Repository" at "http://nexus.htrc.illinois.edu/content/groups/public"
+  resolvers += "I3 Repository" at "http://nexus.htrc.illinois.edu/content/groups/public",
+  publishTo <<= isSnapshot { (isSnapshot: Boolean) =>
+    val nexus = "https://nexus.htrc.illinois.edu/"
+    if (isSnapshot)
+      Some("HTRC Snapshots Repository" at nexus + "content/repositories/snapshots")
+    else
+      Some("HTRC Releases Repository"  at nexus + "content/repositories/releases")
+  },
+  credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
   // wartremoverWarnings ++= Warts.all
 )
 
@@ -11,7 +19,7 @@ lazy val pairtree_to_text = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "pairtree-to-text",
-    version := "1.2-SNAPSHOT",
+    version := "1.3-SNAPSHOT",
     libraryDependencies ++= Seq(
         "org.rogach"                    %% "scallop"              % "0.9.5",
         "org.scala-lang.modules"        %% "scala-xml"            % "1.0.5",
