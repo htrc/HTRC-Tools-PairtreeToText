@@ -119,11 +119,10 @@ object HTRCPairtreeToText extends PairtreeToText {
     * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)] = {
-    val ppath = if (isCleanId) PairtreeHelper.getPathFromCleanId(htid) else PairtreeHelper.getPathFromUncleanId(htid)
-    val volRootPath = new File(pairtreeRootPath, ppath)
-    val id = volRootPath.getName
-    val metsXmlFile = new File(volRootPath, s"$id.mets.xml")
-    val volZipFile = new File(volRootPath, s"$id.zip")
+    val pairtreeDoc = if (isCleanId) PairtreeHelper.getDocFromCleanId(htid) else PairtreeHelper.getDocFromUncleanId(htid)
+    val ppath = pairtreeDoc.getDocumentPathPrefix
+    val metsXmlFile = new File(pairtreeRootPath, s"$ppath.mets.xml")
+    val volZipFile = new File(pairtreeRootPath, s"$ppath.zip")
     pairtreeToText(metsXmlFile, volZipFile)
   }
 
