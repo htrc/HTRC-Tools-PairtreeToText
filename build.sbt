@@ -36,7 +36,7 @@ lazy val pairtree_to_text = (project in file(".")).
   settings(commonSettings: _*).
   settings(
     name := "pairtree-to-text",
-    version := "2.1-SNAPSHOT",
+    version := "2.1",
     description := "",
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     libraryDependencies ++= Seq(
