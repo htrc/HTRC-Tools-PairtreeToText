@@ -37,7 +37,7 @@ lazy val pairtree_to_text = (project in file(".")).
   settings(
     name := "pairtree-to-text",
     version := "2.2-SNAPSHOT",
-    description := "",
+    description := "Tool that extracts full text from a HT volume stored in Pairtree by concatenating the pages in the correct order.",
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     libraryDependencies ++= Seq(
       "org.rogach"                    %% "scallop"              % "2.0.0",
