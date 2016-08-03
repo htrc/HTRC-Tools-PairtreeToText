@@ -6,9 +6,9 @@ import java.nio.file.Files
 import org.rogach.scallop.ScallopConf
 
 import scala.io.{Codec, StdIn}
-import HTRCPairtreeToText._
-
 import scala.util.{Failure, Success}
+
+import PairtreeToText._
 
 /**
   * PairtreeToText
@@ -27,7 +27,7 @@ object Main extends App {
   val pairtreeRootPath = conf.pairtreeRootPath()
   val outputPath = new File(conf.outputPath())
   val isCleanId = conf.isCleanId()
-  val htids = conf.htids.get match {
+  val htids = conf.htids.toOption match {
     case Some(ids) => ids  // use IDs supplied in the argument list
     case _ => Iterator.continually(StdIn.readLine()).takeWhile(_ != null).toList  // read IDs from stdin, one per line
   }
@@ -85,4 +85,6 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     descr = "The list of HT IDs to process",
     required = false
   )
+
+  validateFileExists(pairtreeRootPath)
 }
