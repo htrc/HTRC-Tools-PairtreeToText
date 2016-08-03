@@ -5,9 +5,8 @@ import java.nio.file.Files
 
 import org.rogach.scallop.ScallopConf
 
-import scala.io.{Codec, StdIn}
+import scala.io.{Codec, Source, StdIn}
 import scala.util.{Failure, Success}
-
 import PairtreeToText._
 
 /**
@@ -25,18 +24,18 @@ object Main extends App {
   // parse and extract command line arguments
   val conf = new Conf(args)
   val pairtreeRootPath = conf.pairtreeRootPath()
-  val outputPath = new File(conf.outputPath())
+  val outputPath = conf.outputPath()
   val isCleanId = conf.isCleanId()
   val htids = conf.htids.toOption match {
-    case Some(ids) => ids  // use IDs supplied in the argument list
-    case _ => Iterator.continually(StdIn.readLine()).takeWhile(_ != null).toList  // read IDs from stdin, one per line
+    case Some(file) => Source.fromFile(file).getLines()
+    case None => Iterator.continually(StdIn.readLine()).takeWhile(_ != null)
   }
 
   // ensure output path exists
   outputPath.mkdirs()
 
   // process all the supplied HT IDs in parallel (remove ".par" below if you want sequential processing)
-  for (htid <- htids.par) {
+  for (htid <- htids.toList.par) {
     pairtreeToText(htid, pairtreeRootPath, isCleanId) match {
       case Success((pairtreeDoc, volTxt)) =>
         val volTxtFile = new File(outputPath, s"${pairtreeDoc.getCleanId}.txt")
@@ -71,7 +70,7 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     required = true
   )
 
-  val outputPath = opt[String]("output",
+  val outputPath = opt[File]("output",
     descr = "The output folder where the text files will be written to",
     required = true
   )
@@ -81,10 +80,12 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     default = Some(false)
   )
 
-  val htids = trailArg[List[String]]("htids",
-    descr = "The list of HT IDs to process",
+  val htids = trailArg[File]("htids",
+    descr = "The file containing the list of HT IDs to process (if omitted, will read from stdin)",
     required = false
   )
 
   validateFileExists(pairtreeRootPath)
+  validateFileExists(htids)
+  verify()
 }
