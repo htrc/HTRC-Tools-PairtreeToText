@@ -3,34 +3,34 @@ This application extracts full text from a HT volume stored in Pairtree by conca
 as specified in the associated METS XML metadata file. A number of helpful API methods are made available so this app
 can also be used as a library (whose methods can be invoked from external code)
 
-## Building
-To generate a package that can be invoked via a shell script:
+## Build
+* To generate a "fat" executable JAR, run:  
+  `sbt assembly`  
+  then look for it in `target/scala-2.11/` folder.
 
-`sbt stage`
+* To generate a package that can be invoked via a shell script, run:  
+  `sbt stage`  
+  then find the result in `target/universal/stage/` folder.
 
-then find the result in `target/universal/stage/`
+  *Note:* you can run the JAR via the usual: `java -jar JARFILE`
 
-Alternatively, to generate a "fat" runnable JAR:
-
-`sbt assembly`
-
-then find the result as:
-`target/scala-2.11/pairtree-to-text-assembly-1.0-SNAPSHOT.jar`
-
-you can run the JAR via the usual: `java -jar JARFILE`
-
-## Usage
+* To generate the JAR package that can be used as a dependency in other projects, run:  
+  `sbt package`  
+  then look for it in `target/scala-2.11/` folder.
+  
+## Run
 ```
-pairtree-to-text 1.0-SNAPSHOT
-edu.illinois.i3.htrc.apps
+pairtree-to-text
   -c, --clean-ids         Specifies whether the IDs are 'clean' or not
-  -o, --output  <arg>     The output path where the text files will be written to
+  -o, --output  <arg>     The output folder where the text files will be written
+                          to
   -p, --pairtree  <arg>   The path to the paitree root hierarchy to process
       --help              Show help message
       --version           Show version of this program
 
  trailing arguments:
-  htids (not required)   The list of HT IDs to process
+  htids (not required)   The file containing the list of HT IDs to process (if
+                         omitted, will read from stdin)
 ```
 
 ## API
@@ -66,12 +66,4 @@ The list of API methods available:
     * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)]
-
-  /**
-    * Retrieve the correct page sequence from METS
-    *
-    * @param metsXml The METS XML
-    * @return The sequence of page file names
-    */
-  def getPageSeq(metsXml: xml.Elem): Seq[String]
 ```
