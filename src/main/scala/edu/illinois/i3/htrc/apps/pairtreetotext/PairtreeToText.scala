@@ -11,55 +11,14 @@ import scala.io.Codec
 import scala.util.{Success, Try}
 import scala.xml.XML
 
-trait PairtreeToText {
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param metsXmlFile The METS file describing the volume (and its page ordering)
-    * @param volZipFile The volume ZIP file
-    * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
-    */
-  def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)]
-
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param volZipFile The volume ZIP file
-    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
-    */
-  def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)]
-
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param htid The clean or unclean HT volume ID
-    * @param pairtreeRootPath The root of the pairtree folder structure;<br>
-    *                         for example for a volume ID mdp.39015039688257, the corresponding volume ZIP file is:<br>
-    *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
-    * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
-    * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
-    */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)]
-
+object PairtreeToText {
   /**
     * Retrieve the correct page sequence from METS
     *
     * @param metsXml The METS XML
     * @return The sequence of page file names
     */
-  def getPageSeq(metsXml: xml.Elem): Seq[String]
-}
-
-
-object HTRCPairtreeToText extends PairtreeToText {
-  /**
-    * Retrieve the correct page sequence from METS
-    *
-    * @param metsXml The METS XML
-    * @return The sequence of page file names
-    */
-  def getPageSeq(metsXml: xml.Elem): Seq[String] = for {
+  protected[pairtreetotext] def getPageSeq(metsXml: xml.Elem): Seq[String] = for {
     fileGrp <- metsXml \\ "fileGrp"
     if fileGrp.namespace == "http://www.loc.gov/METS/" && (fileGrp \ "@USE").text == "ocr"
     flocat <- fileGrp \\ "FLocat"
@@ -71,6 +30,7 @@ object HTRCPairtreeToText extends PairtreeToText {
     *
     * @param metsXmlFile The METS file describing the volume (and its page ordering)
     * @param volZipFile The volume ZIP file
+    * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
   def pairtreeToText(metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)] = {
@@ -125,5 +85,4 @@ object HTRCPairtreeToText extends PairtreeToText {
     val volZipFile = new File(pairtreeRootPath, s"$ppath.zip")
     pairtreeToText(metsXmlFile, volZipFile)
   }
-
 }
