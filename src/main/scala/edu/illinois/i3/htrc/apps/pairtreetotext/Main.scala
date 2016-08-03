@@ -87,4 +87,5 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   validateFileExists(pairtreeRootPath)
   validateFileExists(htids)
+  verify()
 }
