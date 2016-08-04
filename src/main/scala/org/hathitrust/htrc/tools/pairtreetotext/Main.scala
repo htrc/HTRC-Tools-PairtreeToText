@@ -1,13 +1,13 @@
-package edu.illinois.i3.htrc.apps.pairtreetotext
+package org.hathitrust.htrc.tools.pairtreetotext
 
-import java.io._
-import java.nio.file.Files
+import java.io.{File, PrintWriter}
 
+import org.hathitrust.htrc.tools.pairtreetotext.PairtreeToText.pairtreeToText
 import org.rogach.scallop.ScallopConf
+import resource._
 
 import scala.io.{Codec, Source, StdIn}
 import scala.util.{Failure, Success}
-import PairtreeToText._
 
 /**
   * PairtreeToText
@@ -16,8 +16,9 @@ import PairtreeToText._
   * order, as specified in the associated METS XML metadata file. A number of helpful API methods are made available
   * so this app can also be used as a library (whose methods can be invoked from external code)
   *
-  * @author capitanu
+  * @author Boris Capitanu
   */
+
 object Main extends App {
   implicit val codec = Codec.UTF8
 
@@ -39,9 +40,10 @@ object Main extends App {
     pairtreeToText(htid, pairtreeRootPath, isCleanId) match {
       case Success((pairtreeDoc, volTxt)) =>
         val volTxtFile = new File(outputPath, s"${pairtreeDoc.getCleanId}.txt")
-        Files.write(volTxtFile.toPath, volTxt.getBytes(codec.charSet))
+        for (writer <- managed(new PrintWriter(volTxtFile, codec.name)))
+          writer.write(volTxt)
 
-      case Failure(e) => scala.Console.err.println(s"Error ($htid): ${e.getMessage}")
+      case Failure(e) => Console.err.println(s"Error [$htid]: ${e.getMessage}")
     }
   }
 }
@@ -66,13 +68,15 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
         vendor => s"$name $version\n$vendor"))).getOrElse("pairtree-to-text"))
 
   val pairtreeRootPath = opt[File]("pairtree",
-    descr = "The path to the paitree root hierarchy to process",
-    required = true
+    descr = "The path to the pairtree root hierarchy to process",
+    required = true,
+    argName = "DIR"
   )
 
   val outputPath = opt[File]("output",
     descr = "The output folder where the text files will be written to",
-    required = true
+    required = true,
+    argName = "DIR"
   )
 
   val isCleanId = opt[Boolean]("clean-ids",

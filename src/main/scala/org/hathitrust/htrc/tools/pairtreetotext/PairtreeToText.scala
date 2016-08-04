@@ -1,10 +1,10 @@
-package edu.illinois.i3.htrc.apps.pairtreetotext
+package org.hathitrust.htrc.tools.pairtreetotext
 
 import java.io.File
 import java.util.zip.ZipFile
 
-import edu.illinois.i3.htrc.tools.PairtreeHelper
-import edu.illinois.i3.htrc.tools.PairtreeHelper.PairtreeDocument
+import org.hathitrust.htrc.tools.pairtreehelper.PairtreeHelper
+import org.hathitrust.htrc.tools.pairtreehelper.PairtreeHelper.PairtreeDocument
 import resource._
 
 import scala.io.Codec
