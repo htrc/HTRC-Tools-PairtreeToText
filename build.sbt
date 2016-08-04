@@ -32,7 +32,7 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val pairtree_to_text = (project in file(".")).
+lazy val `pairtree-to-text` = (project in file(".")).
   enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
   settings(commonSettings: _*).
   settings(
