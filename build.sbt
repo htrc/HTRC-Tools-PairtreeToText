@@ -32,12 +32,12 @@ lazy val commonSettings = Seq(
   )
 )
 
-lazy val pairtree_to_text = (project in file(".")).
+lazy val `pairtree-to-text` = (project in file(".")).
   enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
   settings(commonSettings: _*).
   settings(
     name := "pairtree-to-text",
-    version := "3.0",
+    version := "3.0.1",
     description := "Tool that extracts full text from a HT volume stored in Pairtree by concatenating the pages in the correct order.",
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     libraryDependencies ++= Seq(

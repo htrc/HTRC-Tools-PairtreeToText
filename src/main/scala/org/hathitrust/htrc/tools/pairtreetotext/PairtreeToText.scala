@@ -60,12 +60,13 @@ object PairtreeToText {
     * Retrieve full text (concatenated pages) from HT volume
     *
     * @param volZipFile The volume ZIP file
+    * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
-  def pairtreeToText(volZipFile: File): Try[(PairtreeDocument, String)] = {
+  def pairtreeToText(volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)] = {
     val pairtreeDoc = PairtreeHelper.parse(volZipFile)
     val metsXmlFile = new File(volZipFile.getParentFile, s"${pairtreeDoc.getCleanIdWithoutLibId}.mets.xml")
-    pairtreeToText(metsXmlFile, volZipFile)
+    pairtreeToText(metsXmlFile, volZipFile)(codec)
   }
 
   /**
@@ -76,13 +77,14 @@ object PairtreeToText {
     *                         for example for a volume ID mdp.39015039688257, the corresponding volume ZIP file is:<br>
     *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise (assumed False if missing)
+    * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return A pair representing the volume and its textual content wrapped in Success, or Failure if an error occurred
     */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false): Try[(PairtreeDocument, String)] = {
+  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false)(implicit codec: Codec): Try[(PairtreeDocument, String)] = {
     val pairtreeDoc = if (isCleanId) PairtreeHelper.getDocFromCleanId(htid) else PairtreeHelper.getDocFromUncleanId(htid)
     val ppath = pairtreeDoc.getDocumentPathPrefix
     val metsXmlFile = new File(pairtreeRootPath, s"$ppath.mets.xml")
     val volZipFile = new File(pairtreeRootPath, s"$ppath.zip")
-    pairtreeToText(metsXmlFile, volZipFile)
+    pairtreeToText(metsXmlFile, volZipFile)(codec)
   }
 }
