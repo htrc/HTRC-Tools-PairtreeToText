@@ -22,9 +22,9 @@ can also be used as a library (whose methods can be invoked from external code)
 ```
 pairtree-to-text
   -c, --clean-ids         Specifies whether the IDs are 'clean' or not
-  -o, --output  <arg>     The output folder where the text files will be written
+  -o, --output  <DIR>     The output folder where the text files will be written
                           to
-  -p, --pairtree  <arg>   The path to the paitree root hierarchy to process
+  -p, --pairtree  <DIR>   The path to the paitree root hierarchy to process
       --help              Show help message
       --version           Show version of this program
 
@@ -33,7 +33,7 @@ pairtree-to-text
                          omitted, will read from stdin)
 ```
 
-## API
+## APIs
 The list of API methods available:
 
 ```
