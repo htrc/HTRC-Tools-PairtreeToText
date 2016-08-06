@@ -3,7 +3,7 @@ This application extracts full text from a HT volume stored in Pairtree by conca
 as specified in the associated METS XML metadata file. A number of helpful API methods are made available so this app
 can also be used as a library (whose methods can be invoked from external code)
 
-## Build
+# Build
 * To generate a "fat" executable JAR, run:  
   `sbt assembly`  
   then look for it in `target/scala-2.11/` folder.
@@ -18,7 +18,7 @@ can also be used as a library (whose methods can be invoked from external code)
   `sbt package`  
   then look for it in `target/scala-2.11/` folder.
   
-## Run
+# Run
 ```
 pairtree-to-text
   -c, --clean-ids         Specifies whether the IDs are 'clean' or not
@@ -33,8 +33,22 @@ pairtree-to-text
                          omitted, will read from stdin)
 ```
 
-## APIs
-The list of API methods available:
+# APIs
+
+To use via Maven:
+```
+<dependency>
+    <groupId>org.hathitrust.htrc</groupId>
+    <artifactId>pairtree-to-text_2.11</artifactId>
+    <version>3.2-SNAPSHOT</version>
+</dependency>
+```
+
+To use via SBT:  
+`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "3.2-SNAPSHOT"`
+
+
+## PairtreeToText API
 
 ```
   /**
