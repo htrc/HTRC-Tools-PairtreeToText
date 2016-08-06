@@ -79,11 +79,12 @@ object PairtreeToText {
     * @return A pair representing the volume and its textual content wrapped in Success,
     *         or Failure if an error occurred
     */
-  def pairtreeToText(volZipFile: File)(implicit codec: Codec): Try[(PairtreeDocument, String)] = {
+  def pairtreeToText(volZipFile: File)
+                    (implicit codec: Codec): Try[(PairtreeDocument, String)] = Try {
     val pairtreeDoc = PairtreeHelper.parse(volZipFile)
     val metsXmlFile =
       new File(volZipFile.getParentFile, s"${pairtreeDoc.getCleanIdWithoutLibId}.mets.xml")
-    pairtreeToText(metsXmlFile, volZipFile)(codec)
+    pairtreeToText(metsXmlFile, volZipFile)(codec).get
   }
 
   /**
@@ -101,13 +102,13 @@ object PairtreeToText {
     *         or Failure if an error occurred
     */
   def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false)
-                    (implicit codec: Codec): Try[(PairtreeDocument, String)] = {
+                    (implicit codec: Codec): Try[(PairtreeDocument, String)] = Try {
     val pairtreeDoc =
       if (isCleanId) PairtreeHelper.getDocFromCleanId(htid)
       else PairtreeHelper.getDocFromUncleanId(htid)
     val ppath = pairtreeDoc.getDocumentPathPrefix
     val metsXmlFile = new File(pairtreeRootPath, s"$ppath.mets.xml")
     val volZipFile = new File(pairtreeRootPath, s"$ppath.zip")
-    pairtreeToText(metsXmlFile, volZipFile)(codec)
+    pairtreeToText(metsXmlFile, volZipFile)(codec).get
   }
 }
