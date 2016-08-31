@@ -2,6 +2,7 @@ package org.hathitrust.htrc.tools.pairtreetotext
 
 import java.io.{File, PrintWriter}
 
+import org.hathitrust.htrc.tools.pairtreehelper.PairtreeHelper
 import org.hathitrust.htrc.tools.pairtreetotext.PairtreeToText.pairtreeToText
 import org.rogach.scallop.ScallopConf
 import resource._
@@ -12,9 +13,10 @@ import scala.util.{Failure, Success}
 /**
   * PairtreeToText
   *
-  * This application extracts full text from a HT volume stored in Pairtree by concatenating the pages in the correct
-  * order, as specified in the associated METS XML metadata file. A number of helpful API methods are made available
-  * so this app can also be used as a library (whose methods can be invoked from external code)
+  * This application extracts full text from a HT volume stored in Pairtree by concatenating the
+  * pages in the correct order, as specified in the associated METS XML metadata file. A number
+  * of helpful API methods are made available so this app can also be used as a library
+  * (whose methods can be invoked from external code)
   *
   * @author Boris Capitanu
   */
@@ -38,8 +40,9 @@ object Main extends App {
   // process all the supplied HT IDs in parallel (remove ".par" below if you want sequential processing)
   for (htid <- htids.toList.par) {
     pairtreeToText(htid, pairtreeRootPath, isCleanId) match {
-      case Success((pairtreeDoc, volTxt)) =>
-        val volTxtFile = new File(outputPath, s"${pairtreeDoc.getCleanId}.txt")
+      case Success(volTxt) =>
+        val volFileName = if (isCleanId) htid else PairtreeHelper.cleanId(htid)
+        val volTxtFile = new File(outputPath, s"$volFileName.txt")
         for (writer <- managed(new PrintWriter(volTxtFile, codec.name)))
           writer.write(volTxt)
 
