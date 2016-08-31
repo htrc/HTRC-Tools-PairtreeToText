@@ -40,12 +40,12 @@ To use via Maven:
 <dependency>
     <groupId>org.hathitrust.htrc</groupId>
     <artifactId>pairtree-to-text_2.11</artifactId>
-    <version>4.0</version>
+    <version>4.0.1</version>
 </dependency>
 ```
 
 To use via SBT:  
-`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "4.0"`
+`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "4.0.1"`
 
 
 ## PairtreeToText API
@@ -67,12 +67,11 @@ To use via SBT:
     * Retrieve full text (concatenated pages) from HT volume
     *
     * @param volZipFile The volume ZIP file
-    * @param metsFileExt The file extension of the associated METS XML file
     * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return The text content of the volume wrapped in Success,
     *         or Failure if an error occurred
     */
-  def pairtreeToText(volZipFile: File, metsFileExt: String = METS_XML_EXT)(implicit codec: Codec): Try[String]
+  def pairtreeToText(volZipFile: File)(implicit codec: Codec): Try[String]
                       
   /**
     * Retrieve full text (concatenated pages) from HT volume
@@ -84,13 +83,11 @@ To use via SBT:
     *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
     * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise
     *                  (assumed False if missing)
-    * @param metsFileExt The file extension of the associated METS XML file
-    * @param volFileExt The file extension of the volume ZIP file
     * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return The text content of the volume wrapped in Success,
     *         or Failure if an error occurred
     */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false, metsFileExt: String = METS_XML_EXT, volFileExt: String = VOL_ZIP_EXT)(implicit codec: Codec): Try[String]
+  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false)(implicit codec: Codec): Try[String]
   
   /**
     * Retrieve full text (concatenated pages) from HT volume
@@ -100,11 +97,9 @@ To use via SBT:
     *                         for example for a volume ID mdp.39015039688257, the corresponding
     *                         volume ZIP file is:<br>
     *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
-    * @param metsFileExt The file extension of the associated METS XML file
-    * @param volFileExt The file extension of the volume ZIP file
     * @param codec The codec to use for encoding and decoding the text (implicit)
     * @return The text content of the volume wrapped in Success,
     *         or Failure if an error occurred
     */
-  def pairtreeToText(pairtreeDoc: PairtreeDocument, pairtreeRootPath: File, metsFileExt: String = METS_XML_EXT, volFileExt: String = VOL_ZIP_EXT)(implicit codec: Codec): Try[String]
+  def pairtreeToText(pairtreeDoc: PairtreeDocument, pairtreeRootPath: File)(implicit codec: Codec): Try[String]
 ```
