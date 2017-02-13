@@ -46,9 +46,9 @@ To use via Maven:
 <dependency>
     <groupId>org.hathitrust.htrc</groupId>
     <artifactId>pairtree-to-text_2.11</artifactId>
-    <version>5.0</version>
+    <version>5.1.0-SNAPSHOT</version>
 </dependency>
 ```
 
 To use via SBT:  
-`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.0"`
+`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.1.0-SNAPSHOT"`
