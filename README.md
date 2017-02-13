@@ -1,15 +1,9 @@
 # HTRC-Tools-PairtreeToText
-This application extracts full text from a HT volume stored in Pairtree by concatenating the pages in the correct order,
-as specified in the associated METS XML metadata file. A number of helpful API methods are made available so this app
-can also be used as a library (whose methods can be invoked from external code)
+Tool that extracts full text from a HathiTrust volume stored in Pairtree by concatenating the pages 
+in the correct order, optionally performing additional post-processing to identify running headers, 
+fix end-of-line hyphenation, and reformat the text.
 
 # Build
-* To generate a "fat" executable JAR, run:  
-  `sbt assembly`  
-  then look for it in `target/scala-2.11/` folder.
-
-  *Note:* you can run the JAR via the usual: `java -jar JARFILE`
-
 * To generate a package that can be invoked via a shell script, run:  
   `sbt stage`  
   then find the result in `target/universal/stage/` folder.
@@ -21,12 +15,24 @@ can also be used as a library (whose methods can be invoked from external code)
 # Run
 ```
 pairtree-to-text
-  -c, --clean-ids         Specifies whether the IDs are 'clean' or not
-  -o, --output  <DIR>     The output folder where the text files will be written
-                          to
-  -p, --pairtree  <DIR>   The path to the paitree root hierarchy to process
-      --help              Show help message
-      --version           Show version of this program
+HathiTrust Research Center
+  -p, --pairtree  <DIR>       The path to the pairtree root hierarchy to process
+  -o, --output  <DIR>         The folder where the output will be written to
+  -b, --body-only             Remove running headers/footers from the pages
+                              before concatenation
+  -h, --fix-hyphenation       Remove hyphenation for words occurring at the end
+                              of a line
+  -l, --para-lines            Join lines such that each paragraph is on a single
+                              line
+
+      --clean-ids             Specifies whether the IDs are 'clean' or not
+  -c, --codec  <CODEC>        The codec to use for reading the volume
+  -n, --num-partitions  <N>   The number of partitions to split the input set of
+                              HT IDs into, for increased parallelism
+      --spark-log  <FILE>     Where to write logging output from Spark to
+  -w, --write-pages           Writes each page as a separate text file
+      --help                  Show help message
+      --version               Show version of this program
 
  trailing arguments:
   htids (not required)   The file containing the list of HT IDs to process (if
@@ -40,66 +46,9 @@ To use via Maven:
 <dependency>
     <groupId>org.hathitrust.htrc</groupId>
     <artifactId>pairtree-to-text_2.11</artifactId>
-    <version>4.0.1</version>
+    <version>5.0</version>
 </dependency>
 ```
 
 To use via SBT:  
-`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "4.0.1"`
-
-
-## PairtreeToText API
-
-```
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param pairtreeDoc The PairtreeDocument representing the volume
-    * @param metsXmlFile The METS file describing the volume (and its page ordering)
-    * @param volZipFile The volume ZIP file
-    * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return The text content of the volume wrapped in Success,
-    *         or Failure if an error occurred
-    */
-  def pairtreeToText(pairtreeDoc: PairtreeDocument, metsXmlFile: File, volZipFile: File)(implicit codec: Codec): Try[String]
-  
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param volZipFile The volume ZIP file
-    * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return The text content of the volume wrapped in Success,
-    *         or Failure if an error occurred
-    */
-  def pairtreeToText(volZipFile: File)(implicit codec: Codec): Try[String]
-                      
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param htid The clean or unclean HT volume ID
-    * @param pairtreeRootPath The root of the pairtree folder structure;<br>
-    *                         for example for a volume ID mdp.39015039688257, the corresponding
-    *                         volume ZIP file is:<br>
-    *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
-    * @param isCleanId True if `htid` represents a 'clean' ID, False otherwise
-    *                  (assumed False if missing)
-    * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return The text content of the volume wrapped in Success,
-    *         or Failure if an error occurred
-    */
-  def pairtreeToText(htid: String, pairtreeRootPath: File, isCleanId: Boolean = false)(implicit codec: Codec): Try[String]
-  
-  /**
-    * Retrieve full text (concatenated pages) from HT volume
-    *
-    * @param pairtreeDoc The PairtreeDocument representing the volume
-    * @param pairtreeRootPath The root of the pairtree folder structure;<br>
-    *                         for example for a volume ID mdp.39015039688257, the corresponding
-    *                         volume ZIP file is:<br>
-    *                         [pairtreeRootPath]/mdp/pairtree_root/39/01/50/39/68/82/57/39015039688257/39015039688257.zip
-    * @param codec The codec to use for encoding and decoding the text (implicit)
-    * @return The text content of the volume wrapped in Success,
-    *         or Failure if an error occurred
-    */
-  def pairtreeToText(pairtreeDoc: PairtreeDocument, pairtreeRootPath: File)(implicit codec: Codec): Try[String]
-```
+`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.0"`
