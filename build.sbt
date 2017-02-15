@@ -88,16 +88,3 @@ lazy val app = (project in file("app")).dependsOn(lib).
     publish      := {},
     publishLocal := {}
   )
-
-lazy val app = (project in file("app")).dependsOn(lib).
-  enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
-  settings(commonSettings: _*).
-  //settings(spark("2.1.0"): _*).
-  settings(spark_dev("2.1.0"): _*).
-  settings(
-    name := "pairtree-to-text",
-    libraryDependencies ++= Seq(
-      "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
-      "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
-    )
-  )
