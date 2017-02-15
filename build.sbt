@@ -39,11 +39,11 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(lib, app)
   .settings(
-    aggregate in publish := false,
-    aggregate in assembly := false
+    publish      := {},
+    publishLocal := {}
   )
+  .aggregate(lib, app)
 
 lazy val lib = (project in file("lib")).
   enablePlugins(GitVersioning, GitBranchPrompt).
@@ -61,16 +61,32 @@ lazy val lib = (project in file("lib")).
     libraryDependencies ++= Seq(
       "org.hathitrust.htrc"           %% "running-headers"      % "0.7",
       "org.hathitrust.htrc"           %% "scala-utils"          % "2.1",
-      "org.hathitrust.htrc"           %% "spark-utils"          % "1.0.2",
-      "org.rogach"                    %% "scallop"              % "2.1.0",
       "com.jsuereth"                  %% "scala-arm"            % "2.0",
       "org.hathitrust.htrc"           %  "pairtree-helper"      % "3.1"
         exclude("com.beust", "jcommander"),
+      "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
+      "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
+    ),
+    crossScalaVersions := Seq("2.12.1", "2.11.8")
+  )
+
+lazy val app = (project in file("app")).dependsOn(lib).
+  enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
+  settings(commonSettings: _*).
+  //settings(spark("2.1.0"): _*).
+  settings(spark_dev("2.1.0"): _*).
+  settings(
+    name := "pairtree-to-text",
+    libraryDependencies ++= Seq(
+      "org.rogach"                    %% "scallop"              % "2.1.0",
+      "org.hathitrust.htrc"           %% "spark-utils"          % "1.0.2",
       "ch.qos.logback"                %  "logback-classic"      % "1.2.1",
       "org.codehaus.janino"           %  "janino"               % "3.0.6",
       "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
       "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
-    )
+    ),
+    publish      := {},
+    publishLocal := {}
   )
 
 lazy val app = (project in file("app")).dependsOn(lib).
