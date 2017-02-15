@@ -3,6 +3,7 @@ package org.hathitrust.htrc.tools.pairtreetotext
 import java.io.File
 import java.nio.file.{Files, Paths}
 
+import com.gilt.gfc.time.Timer
 import org.apache.hadoop.fs.Path
 import org.apache.spark.{SparkConf, SparkContext}
 import org.hathitrust.htrc.tools.pairtreetotext.Helper.logger
@@ -68,6 +69,7 @@ object Main {
     val sc = new SparkContext(sparkConf)
 
     logger.info("Running...")
+    val t0 = System.nanoTime()
 
     // ensure output path exists
     conf.outputPath().mkdirs()
@@ -108,7 +110,10 @@ object Main {
     if (volErrAcc.nonEmpty)
       volErrAcc.saveErrors(new Path(outputPath, "errors.txt"), _.toString)
 
-    logger.info("All done.")
+    val t1 = System.nanoTime()
+    val elapsed = t1 - t0
+
+    logger.info(f"All done in ${Timer.pretty(elapsed)}")
   }
 
   /**
@@ -125,10 +130,9 @@ object Main {
       (nameOpt, versionOpt, vendorOpt)
     }
 
-    version(appTitle.flatMap(
-      name => appVersion.flatMap(
-        version => appVendor.map(
-          vendor => s"$name $version\n$vendor"))).getOrElse(appName))
+    version(appVersion.flatMap(
+      version => appVendor.map(
+        vendor => s"$appName $version\n$vendor")).getOrElse(appName))
 
     implicit private val codecConverter = singleArgConverter[Codec](Codec(_))
 
