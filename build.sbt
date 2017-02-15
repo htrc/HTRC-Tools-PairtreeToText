@@ -76,15 +76,18 @@ lazy val app = (project in file("app")).dependsOn(lib).
   //settings(spark("2.1.0"): _*).
   settings(spark_dev("2.1.0"): _*).
   settings(
-    name := "pairtree-to-text",
+    name := "pairtree-to-text-app",
     libraryDependencies ++= Seq(
       "org.rogach"                    %% "scallop"              % "2.1.0",
       "org.hathitrust.htrc"           %% "spark-utils"          % "1.0.2",
       "ch.qos.logback"                %  "logback-classic"      % "1.2.1",
       "org.codehaus.janino"           %  "janino"               % "3.0.6",
+      "com.gilt"                      %% "gfc-time"             % "0.0.7",
+      "com.github.nscala-time"        %% "nscala-time"          % "2.16.0",
       "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
       "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
     ),
     publish      := {},
-    publishLocal := {}
+    publishLocal := {},
+    executableScriptName := "pairtree-to-text"
   )

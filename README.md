@@ -52,4 +52,8 @@ To use via Maven:
 ```
 
 To use via SBT:  
+<<<<<<< HEAD
 `libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.2.0-SNAPSHOT"`
+=======
+`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.1.2"`
+>>>>>>> v5.1.2
