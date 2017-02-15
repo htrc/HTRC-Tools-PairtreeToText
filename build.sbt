@@ -24,35 +24,40 @@ lazy val commonSettings = Seq(
     "I3 Repository" at "http://nexus.htrc.illinois.edu/content/groups/public",
     Resolver.mavenLocal
   ),
-  publishTo := {
-    val nexus = "https://nexus.htrc.illinois.edu/"
-    if (isSnapshot.value)
-      Some("HTRC Snapshots Repository" at nexus + "content/repositories/snapshots")
-    else
-      Some("HTRC Releases Repository"  at nexus + "content/repositories/releases")
-  },
-  credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
   packageOptions in (Compile, packageBin) += Package.ManifestAttributes(
     ("Git-Sha", git.gitHeadCommit.value.getOrElse("N/A")),
     ("Git-Branch", git.gitCurrentBranch.value),
     ("Git-Version", git.gitDescribedVersion.value.getOrElse("N/A")),
     ("Git-Dirty", git.gitUncommittedChanges.value.toString),
     ("Build-Date", new java.util.Date().toString)
-  )
-)
-
-lazy val `pairtree-to-text` = (project in file(".")).
-  enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
-  settings(commonSettings: _*).
-  //settings(spark("2.1.0"): _*).
-  settings(spark_dev("2.1.0"): _*).
-  settings(
-    name := "pairtree-to-text",
-    description := "Tool that extracts full text from a HT volume stored in Pairtree by " +
+  ),
+  description := "Tool that extracts full text from a HT volume stored in Pairtree by " +
       "concatenating the pages in the correct order, optionally performing additional " +
       "post-processing to identify running headers, fix end-of-line hyphenation, and " +
       "reformat the text.",
-    licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
+  licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0")
+)
+
+lazy val root = (project in file("."))
+  .aggregate(lib, app)
+  .settings(
+    aggregate in publish := false,
+    aggregate in assembly := false
+  )
+
+lazy val lib = (project in file("lib")).
+  enablePlugins(GitVersioning, GitBranchPrompt).
+  settings(commonSettings: _*).
+  settings(
+    name := "pairtree-to-text",
+    publishTo := {
+      val nexus = "https://nexus.htrc.illinois.edu/"
+      if (isSnapshot.value)
+        Some("HTRC Snapshots Repository" at nexus + "content/repositories/snapshots")
+      else
+        Some("HTRC Releases Repository"  at nexus + "content/repositories/releases")
+    },
+    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     libraryDependencies ++= Seq(
       "org.hathitrust.htrc"           %% "running-headers"      % "0.7",
       "org.hathitrust.htrc"           %% "scala-utils"          % "2.1",
@@ -63,6 +68,19 @@ lazy val `pairtree-to-text` = (project in file(".")).
         exclude("com.beust", "jcommander"),
       "ch.qos.logback"                %  "logback-classic"      % "1.2.1",
       "org.codehaus.janino"           %  "janino"               % "3.0.6",
+      "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
+      "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
+    )
+  )
+
+lazy val app = (project in file("app")).dependsOn(lib).
+  enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
+  settings(commonSettings: _*).
+  //settings(spark("2.1.0"): _*).
+  settings(spark_dev("2.1.0"): _*).
+  settings(
+    name := "pairtree-to-text",
+    libraryDependencies ++= Seq(
       "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
       "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
     )
