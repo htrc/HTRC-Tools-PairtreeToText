@@ -4,15 +4,16 @@ in the correct order, optionally performing additional post-processing to identi
 fix end-of-line hyphenation, and reformat the text.
 
 # Build
-* To generate a package that can be invoked via a shell script, run:  
-  `sbt stage`  
-  then find the result in `target/universal/stage/` folder.
+* To generate an executable package that can be invoked via a shell script, run:  
+  `sbt app/stage`  
+  then find the result in `app/target/universal/stage/` folder.
 
 * To generate the JAR package that can be used as a dependency in other projects, run:  
-  `sbt package`  
-  then look for it in `target/scala-2.11/` folder.
+  `sbt lib/package`  
+  then look for it in `lib/target/scala-2.11/` folder.
   
 # Run
+The following command line arguments are available:
 ```
 pairtree-to-text
 HathiTrust Research Center
@@ -46,9 +47,9 @@ To use via Maven:
 <dependency>
     <groupId>org.hathitrust.htrc</groupId>
     <artifactId>pairtree-to-text_2.11</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
+    <version>5.1.1</version>
 </dependency>
 ```
 
 To use via SBT:  
-`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.1.0-SNAPSHOT"`
+`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.1.1"`
