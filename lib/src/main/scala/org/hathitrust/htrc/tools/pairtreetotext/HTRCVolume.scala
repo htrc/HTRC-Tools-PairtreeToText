@@ -107,7 +107,7 @@ object HTRCVolume {
     */
   def apply(pairtreeDoc: PairtreeDocument, metsFile: File, zipFile: File)
            (implicit codec: Codec): HTRCVolume = {
-    val metsXml = Helper.loadXml(metsFile)
+    val metsXml = Utils.loadXml(metsFile)
     managed(new ZipFile(zipFile, codec.charSet)).acquireAndGet(
       HTRCVolume(pairtreeDoc, metsXml, _)
     )
