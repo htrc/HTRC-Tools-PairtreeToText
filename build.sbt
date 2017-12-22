@@ -9,7 +9,7 @@ lazy val commonSettings = Seq(
   organization := "org.hathitrust.htrc",
   organizationName := "HathiTrust Research Center",
   organizationHomepage := Some(url("https://www.hathitrust.org/htrc")),
-  scalaVersion := "2.11.8",
+  scalaVersion := "2.11.12",
   scalacOptions ++= Seq(
     "-feature",
     "-language:postfixOps",
@@ -64,28 +64,28 @@ lazy val lib = (project in file("lib")).
       "com.jsuereth"                  %% "scala-arm"            % "2.0",
       "org.hathitrust.htrc"           %  "pairtree-helper"      % "3.1"
         exclude("com.beust", "jcommander"),
-      "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
-      "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
+      "org.scalacheck"                %% "scalacheck"           % "1.13.5"      % Test,
+      "org.scalatest"                 %% "scalatest"            % "3.0.4"       % Test
     ),
-    crossScalaVersions := Seq("2.12.1", "2.11.8")
+    crossScalaVersions := Seq("2.12.4", "2.11.12")
   )
 
 lazy val app = (project in file("app")).dependsOn(lib).
   enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
   settings(commonSettings: _*).
-  //settings(spark("2.1.0"): _*).
-  settings(spark_dev("2.1.0"): _*).
+  //settings(spark("2.2.1"): _*).
+  settings(spark_dev("2.2.1"): _*).
   settings(
     name := "pairtree-to-text-app",
     libraryDependencies ++= Seq(
-      "org.rogach"                    %% "scallop"              % "2.1.0",
+      "org.rogach"                    %% "scallop"              % "2.1.3",
       "org.hathitrust.htrc"           %% "spark-utils"          % "1.0.2",
-      "ch.qos.logback"                %  "logback-classic"      % "1.2.1",
-      "org.codehaus.janino"           %  "janino"               % "3.0.6",
+      "ch.qos.logback"                %  "logback-classic"      % "1.2.3",
+      "org.codehaus.janino"           %  "janino"               % "3.0.8",
       "com.gilt"                      %% "gfc-time"             % "0.0.7",
-      "com.github.nscala-time"        %% "nscala-time"          % "2.16.0",
-      "org.scalacheck"                %% "scalacheck"           % "1.13.4"      % Test,
-      "org.scalatest"                 %% "scalatest"            % "3.0.1"       % Test
+      "com.github.nscala-time"        %% "nscala-time"          % "2.18.0",
+      "org.scalacheck"                %% "scalacheck"           % "1.13.5"      % Test,
+      "org.scalatest"                 %% "scalatest"            % "3.0.4"       % Test
     ),
     publish      := {},
     publishLocal := {},
