@@ -12,13 +12,9 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.12",
   scalacOptions ++= Seq(
     "-feature",
+    "-deprecation",
     "-language:postfixOps",
-    "-language:implicitConversions",
-    "-target:jvm-1.7"
-  ),
-  javacOptions ++= Seq(
-    "-source", "1.7",
-    "-target", "1.7"
+    "-language:implicitConversions"
   ),
   resolvers ++= Seq(
     "I3 Repository" at "http://nexus.htrc.illinois.edu/content/groups/public",
@@ -38,7 +34,7 @@ lazy val commonSettings = Seq(
   licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0")
 )
 
-lazy val root = (project in file("."))
+lazy val `pairtree-to-text` = (project in file("."))
   .settings(
     publish      := {},
     publishLocal := {}
@@ -47,7 +43,7 @@ lazy val root = (project in file("."))
 
 lazy val lib = (project in file("lib")).
   enablePlugins(GitVersioning, GitBranchPrompt).
-  settings(commonSettings: _*).
+  settings(commonSettings).
   settings(
     name := "pairtree-to-text",
     publishTo := {
@@ -59,33 +55,33 @@ lazy val lib = (project in file("lib")).
     },
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
     libraryDependencies ++= Seq(
-      "org.hathitrust.htrc"           %% "running-headers"      % "0.7",
-      "org.hathitrust.htrc"           %% "scala-utils"          % "2.1",
+      "org.hathitrust.htrc"           %% "running-headers"      % "0.8",
+      "org.hathitrust.htrc"           %% "scala-utils"          % "2.3.0",
       "com.jsuereth"                  %% "scala-arm"            % "2.0",
       "org.hathitrust.htrc"           %  "pairtree-helper"      % "3.1"
         exclude("com.beust", "jcommander"),
       "org.scalacheck"                %% "scalacheck"           % "1.13.5"      % Test,
-      "org.scalatest"                 %% "scalatest"            % "3.0.4"       % Test
+      "org.scalatest"                 %% "scalatest"            % "3.0.5"       % Test
     ),
-    crossScalaVersions := Seq("2.12.4", "2.11.12")
+    crossScalaVersions := Seq("2.12.5", "2.11.12")
   )
 
 lazy val app = (project in file("app")).dependsOn(lib).
   enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging).
-  settings(commonSettings: _*).
-  //settings(spark("2.2.1"): _*).
-  settings(spark_dev("2.2.1"): _*).
+  settings(commonSettings).
+  //settings(spark("2.3.0")).
+  settings(spark_dev("2.3.0")).
   settings(
     name := "pairtree-to-text-app",
     libraryDependencies ++= Seq(
-      "org.rogach"                    %% "scallop"              % "2.1.3",
+      "org.rogach"                    %% "scallop"              % "3.1.2",
       "org.hathitrust.htrc"           %% "spark-utils"          % "1.0.2",
       "ch.qos.logback"                %  "logback-classic"      % "1.2.3",
       "org.codehaus.janino"           %  "janino"               % "3.0.8",
       "com.gilt"                      %% "gfc-time"             % "0.0.7",
       "com.github.nscala-time"        %% "nscala-time"          % "2.18.0",
       "org.scalacheck"                %% "scalacheck"           % "1.13.5"      % Test,
-      "org.scalatest"                 %% "scalatest"            % "3.0.4"       % Test
+      "org.scalatest"                 %% "scalatest"            % "3.0.5"       % Test
     ),
     publish      := {},
     publishLocal := {},
