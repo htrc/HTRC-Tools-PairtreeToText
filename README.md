@@ -4,14 +4,10 @@ in the correct order, optionally performing additional post-processing to identi
 fix end-of-line hyphenation, and reformat the text.
 
 # Build
-* To generate an executable package that can be invoked via a shell script, run:  
-  `sbt app/stage`  
-  then find the result in `app/target/universal/stage/` folder.
+`sbt dist`
 
-* To generate the JAR package that can be used as a dependency in other projects, run:  
-  `sbt lib/package`  
-  then look for it in `lib/target/scala-2.11/` folder.
-  
+then find the built package in the `target/universal/` folder.
+
 # Run
 The following command line arguments are available:
 ```
@@ -25,8 +21,6 @@ HathiTrust Research Center
                               of a line
   -l, --para-lines            Join lines such that each paragraph is on a single
                               line
-
-      --clean-ids             Specifies whether the IDs are 'clean' or not
   -c, --codec  <CODEC>        The codec to use for reading the volume
   -n, --num-partitions  <N>   The number of partitions to split the input set of
                               HT IDs into, for increased parallelism
@@ -39,17 +33,3 @@ HathiTrust Research Center
   htids (not required)   The file containing the list of HT IDs to process (if
                          omitted, will read from stdin)
 ```
-
-# APIs
-
-To use via Maven:
-```
-<dependency>
-    <groupId>org.hathitrust.htrc</groupId>
-    <artifactId>pairtree-to-text_2.11</artifactId>
-    <version>5.1.2</version>
-</dependency>
-```
-
-To use via SBT:  
-`libraryDependencies += "org.hathitrust.htrc" %% "pairtree-to-text" % "5.1.2"`
