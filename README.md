@@ -4,8 +4,9 @@ in the correct order, optionally performing additional post-processing to identi
 fix end-of-line hyphenation, and reformat the text.
 
 # Build
-`sbt stage`  
-then find the result in `target/universal/stage/` folder.
+`sbt dist`
+
+then find the built package in the `target/universal/` folder.
 
 # Run
 The following command line arguments are available:
