@@ -36,7 +36,7 @@ object Main {
     val outputPath = conf.outputPath().toString
     val codec = conf.codec().name
     val bodyOnly = conf.bodyOnly()
-    val fixHyphenation = conf.fixHyphenation()
+    val dehyphenateAtEol = conf.dehyphenateAtEol()
     val paraLines = conf.paraLines()
     val writePages = conf.writePages()
     val htids = conf.htids.toOption match {
@@ -50,7 +50,7 @@ object Main {
     }
 
     val textOptions = mutable.HashSet.empty[TextOptions]
-    if (fixHyphenation) {
+    if (dehyphenateAtEol) {
       textOptions ++= Seq(TrimLines, RemoveEmptyLines, DehyphenateAtEol)
     }
     if (paraLines) {
