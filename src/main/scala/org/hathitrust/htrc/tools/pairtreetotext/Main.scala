@@ -51,7 +51,7 @@ object Main {
 
     val textOptions = mutable.HashSet.empty[TextOptions]
     if (fixHyphenation) {
-      textOptions ++= Seq(TrimLines, RemoveEmptyLines, FixHyphenation)
+      textOptions ++= Seq(TrimLines, RemoveEmptyLines, DehyphenateAtEol)
     }
     if (paraLines) {
       textOptions ++= Seq(TrimLines, RemoveEmptyLines, ParaLines)
