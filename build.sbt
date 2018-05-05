@@ -49,7 +49,7 @@ lazy val `pairtree-to-text` = (project in file(".")).
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     libraryDependencies ++= Seq(
       "org.rogach"                    %% "scallop"              % "3.1.2",
-      "org.hathitrust.htrc"           %% "data-model"           % "1.1",
+      "org.hathitrust.htrc"           %% "data-model"           % "1.2",
       "org.hathitrust.htrc"           %% "spark-utils"          % "1.0.2",
       "ch.qos.logback"                %  "logback-classic"      % "1.2.3",
       "org.codehaus.janino"           %  "janino"               % "3.0.8",
