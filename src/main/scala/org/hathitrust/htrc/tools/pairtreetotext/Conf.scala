@@ -65,7 +65,7 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     default = Some(false)
   )
 
-  val fixHyphenation: ScallopOption[Boolean] = opt[Boolean]("fix-hyphenation",
+  val dehyphenateAtEol: ScallopOption[Boolean] = opt[Boolean]("dehyphenate-at-eol",
     short = 'h',
     descr = "Remove hyphenation for words occurring at the end of a line",
     default = Some(false)
@@ -87,7 +87,7 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     required = false
   )
 
-  mainOptions = Seq(pairtreeRootPath, outputPath, bodyOnly, fixHyphenation, paraLines)
+  mainOptions = Seq(pairtreeRootPath, outputPath, bodyOnly, dehyphenateAtEol, paraLines)
   validateFileExists(pairtreeRootPath)
   validateFileExists(htids)
   verify()
