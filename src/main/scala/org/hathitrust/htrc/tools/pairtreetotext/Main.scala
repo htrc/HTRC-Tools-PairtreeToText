@@ -5,14 +5,15 @@ import java.nio.file.{Files, Paths}
 import com.gilt.gfc.time.Timer
 import org.apache.hadoop.fs.Path
 import org.apache.spark.{SparkConf, SparkContext}
-import org.hathitrust.htrc.data.TextOptions._
 import org.hathitrust.htrc.data.id2Volume
+import org.hathitrust.htrc.data.ops.TextOptions.{TextOptions, _}
+import org.hathitrust.htrc.tools.pairtreetotext.Helper._
 import org.hathitrust.htrc.tools.spark.errorhandling.ErrorAccumulator
 import org.hathitrust.htrc.tools.spark.errorhandling.RddExtensions._
+import resource._
 
 import scala.collection.mutable
 import scala.io.{Codec, Source, StdIn}
-import Helper._
 
 /**
   * PairtreeToText
@@ -40,7 +41,7 @@ object Main {
     val paraLines = conf.paraLines()
     val writePages = conf.writePages()
     val htids = conf.htids.toOption match {
-      case Some(file) => Source.fromFile(file).getLines().toSeq
+      case Some(file) => managed(Source.fromFile(file)).acquireAndGet(_.getLines().toSeq)
       case None => Iterator.continually(StdIn.readLine()).takeWhile(_ != null).toSeq
     }
 
