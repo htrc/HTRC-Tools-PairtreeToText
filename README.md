@@ -1,5 +1,5 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/htrc/HTRC-Tools-PairtreeToText/ci.yml?branch=develop)](https://github.com/htrc/HTRC-Tools-PairtreeToText/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/htrc/HTRC-Tools-PairtreeToText/branch/develop/graph/badge.svg?token=ZFB6X3AKGV)](https://codecov.io/gh/htrc/HTRC-Tools-PairtreeToText)
+[![codecov](https://codecov.io/github/htrc/HTRC-Tools-PairtreeToText/branch/develop/graph/badge.svg?token=0KJM3FU6N7)](https://codecov.io/github/htrc/HTRC-Tools-PairtreeToText)
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/htrc/HTRC-Tools-PairtreeToText?include_prereleases&sort=semver)](https://github.com/htrc/HTRC-Tools-PairtreeToText/releases/latest)
 
 # HTRC-Tools-PairtreeToText
