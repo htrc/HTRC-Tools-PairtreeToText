@@ -1,3 +1,7 @@
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/htrc/HTRC-Tools-PairtreeToText/ci.yml?branch=develop)](https://github.com/htrc/HTRC-Tools-PairtreeToText/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/htrc/HTRC-Tools-PairtreeToText/branch/develop/graph/badge.svg?token=ZFB6X3AKGV)](https://codecov.io/gh/htrc/HTRC-Tools-PairtreeToText)
+[![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/htrc/HTRC-Tools-PairtreeToText?include_prereleases&sort=semver)](https://github.com/htrc/HTRC-Tools-PairtreeToText/releases/latest)
+
 # HTRC-Tools-PairtreeToText
 Tool that extracts full text from a HathiTrust volume stored in Pairtree by concatenating the pages 
 in the correct order, optionally performing additional post-processing to identify running headers, 

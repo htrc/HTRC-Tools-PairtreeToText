@@ -1,19 +1,19 @@
 package org.hathitrust.htrc.tools.pairtreetotext
 
-import java.nio.file.{Files, Paths}
-
 import com.gilt.gfc.time.Timer
 import org.apache.hadoop.fs.Path
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
+import org.apache.spark.sql.SparkSession
 import org.hathitrust.htrc.data.id2Volume
 import org.hathitrust.htrc.data.ops.TextOptions.{TextOptions, _}
 import org.hathitrust.htrc.tools.pairtreetotext.Helper._
 import org.hathitrust.htrc.tools.spark.errorhandling.ErrorAccumulator
 import org.hathitrust.htrc.tools.spark.errorhandling.RddExtensions._
-import resource._
 
+import java.nio.file.{Files, Paths}
 import scala.collection.mutable
 import scala.io.{Codec, Source, StdIn}
+import scala.util.Using
 
 /**
   * PairtreeToText
@@ -31,7 +31,7 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     // parse and extract command line arguments
-    val conf = new Conf(args)
+    val conf = new Conf(args.toIndexedSeq)
     val numPartitions = conf.numPartitions.toOption
     val pairtreeRootPath = conf.pairtreeRootPath().toString
     val outputPath = conf.outputPath().toString
@@ -41,14 +41,29 @@ object Main {
     val paraLines = conf.paraLines()
     val writePages = conf.writePages()
     val htids = conf.htids.toOption match {
-      case Some(file) => managed(Source.fromFile(file)).acquireAndGet(_.getLines().toSeq)
+      case Some(file) => Using.resource(Source.fromFile(file))(_.getLines().toSeq)
       case None => Iterator.continually(StdIn.readLine()).takeWhile(_ != null).toSeq
     }
 
+    conf.outputPath().mkdirs()
+
+    // set up logging destination
     conf.sparkLog.toOption match {
       case Some(logFile) => System.setProperty("spark.logFile", logFile)
       case None =>
     }
+    System.setProperty("logLevel", conf.logLevel().toUpperCase)
+
+    // set up Spark context
+    val sparkConf = new SparkConf()
+    sparkConf.setAppName(appName)
+    sparkConf.setIfMissing("spark.master", "local[*]")
+
+    val spark = SparkSession.builder()
+      .config(sparkConf)
+      .getOrCreate()
+
+    val sc = spark.sparkContext
 
     val textOptions = mutable.HashSet.empty[TextOptions]
     if (dehyphenateAtEol) {
@@ -57,12 +72,6 @@ object Main {
     if (paraLines) {
       textOptions ++= Seq(TrimLines, RemoveEmptyLines, ParaLines)
     }
-
-    val sparkConf = new SparkConf()
-    sparkConf.setIfMissing("spark.master", "local[*]")
-    sparkConf.setIfMissing("spark.app.name", appName)
-
-    val sc = new SparkContext(sparkConf)
 
     logger.info("Running...")
     val t0 = Timer.nanoClock()

@@ -30,22 +30,26 @@
   <logger level="ERROR" name="org.apache.hadoop.hive.ql.exec.FunctionRegistry"/>
 
   <!-- Default root logger (where all Spark output goes) -->
-  <root level="INFO">
-    <if condition='isDefined("spark.logFile")'>
-      <then>
+  <root level="INFO"/>
+
+  <if condition='isDefined("spark.logFile")'>
+    <then>
+      <root>
         <appender-ref ref="FILE"/>
-      </then>
-    </if>
-  </root>
+      </root>
+    </then>
+  </if>
 
   <!-- additivity=false prevents logs for this logger to go to the other inherited appenders -->
-  <logger additivity="false" level="INFO" name="pairtree-to-text">
+  <logger additivity="false" level="${logLevel:-INFO}" name="pairtree-to-text">
     <appender-ref ref="STDOUT"/>
-
-    <if condition='isDefined("spark.logFile")'>
-      <then>
-        <appender-ref ref="FILE"/>
-      </then>
-    </if>
   </logger>
+
+  <if condition='isDefined("spark.logFile")'>
+    <then>
+      <logger name="pairtree-to-text">
+        <appender-ref ref="FILE"/>
+      </logger>
+    </then>
+  </if>
 </configuration>
