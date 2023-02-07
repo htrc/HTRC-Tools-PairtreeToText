@@ -1,9 +1,8 @@
 package org.hathitrust.htrc.tools.pairtreetotext
 
+import org.rogach.scallop.{ScallopConf, ScallopOption, ScallopOptionGroup, ValueConverter, singleArgConverter}
+
 import java.io.File
-
-import org.rogach.scallop.{ScallopConf, ScallopOption, ValueConverter, singleArgConverter}
-
 import scala.io.Codec
 
 /**
@@ -27,10 +26,19 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   implicit private val codecConverter: ValueConverter[Codec] = singleArgConverter[Codec](Codec(_))
 
+  val appOptions: ScallopOptionGroup = group("Main Options:")
+
   val sparkLog: ScallopOption[String] = opt[String]("spark-log",
     descr = "Where to write logging output from Spark to",
     argName = "FILE",
     noshort = true
+  )
+
+  val logLevel: ScallopOption[String] = opt[String]("log-level",
+    descr = "The application log level; one of INFO, DEBUG, OFF",
+    argName = "LEVEL",
+    default = Some("INFO"),
+    validate = level => Set("INFO", "DEBUG", "OFF").contains(level.toUpperCase)
   )
 
   val numPartitions: ScallopOption[Int] = opt[Int]("num-partitions",
@@ -44,13 +52,15 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   val pairtreeRootPath: ScallopOption[File] = opt[File]("pairtree",
     descr = "The path to the pairtree root hierarchy to process",
     required = true,
-    argName = "DIR"
+    argName = "DIR",
+    group = appOptions
   )
 
   val outputPath: ScallopOption[File] = opt[File]("output",
     descr = "The folder where the output will be written to",
     required = true,
-    argName = "DIR"
+    argName = "DIR",
+    group = appOptions
   )
 
   val codec: ScallopOption[Codec] = opt[Codec]("codec",
@@ -62,19 +72,22 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   val bodyOnly: ScallopOption[Boolean] = opt[Boolean]("body-only",
     descr = "Remove running headers/footers from the pages before concatenation",
-    default = Some(false)
+    default = Some(false),
+    group = appOptions
   )
 
   val dehyphenateAtEol: ScallopOption[Boolean] = opt[Boolean]("dehyphenate-at-eol",
     short = 'h',
     descr = "Remove hyphenation for words occurring at the end of a line",
-    default = Some(false)
+    default = Some(false),
+    group = appOptions
   )
 
   val paraLines: ScallopOption[Boolean] = opt[Boolean]("para-lines",
     short = 'l',
     descr = "Join lines such that each paragraph is on a single line",
-    default = Some(false)
+    default = Some(false),
+    group = appOptions
   )
 
   val writePages: ScallopOption[Boolean] = opt[Boolean]("write-pages",
@@ -87,7 +100,6 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     required = false
   )
 
-  mainOptions = Seq(pairtreeRootPath, outputPath, bodyOnly, dehyphenateAtEol, paraLines)
   validateFileExists(pairtreeRootPath)
   validateFileExists(htids)
   verify()

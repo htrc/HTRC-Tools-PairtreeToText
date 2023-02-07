@@ -1,11 +1,10 @@
 package org.hathitrust.htrc.tools.pairtreetotext
 
-import java.nio.file.{Files, Path}
-
 import org.slf4j.{Logger, LoggerFactory}
-import resource._
 
+import java.nio.file.{Files, Path}
 import scala.io.Codec
+import scala.util.Using
 
 object Helper {
   @transient lazy val logger: Logger = LoggerFactory.getLogger(Main.appName)
@@ -18,6 +17,5 @@ object Helper {
     * @param codec The codec to use (implicit)
     */
   def writeTextFile(text: String, path: Path)(implicit codec: Codec): Unit =
-    for (f <- managed(Files.newBufferedWriter(path, codec.charSet)))
-      f.write(text)
+    Using.resource(Files.newBufferedWriter(path, codec.charSet))(_.write(text))
 }
