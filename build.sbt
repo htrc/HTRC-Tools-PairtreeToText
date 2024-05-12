@@ -6,7 +6,7 @@ inThisBuild(Seq(
   organization := "org.hathitrust.htrc",
   organizationName := "HathiTrust Research Center",
   organizationHomepage := Some(url("https://www.hathitrust.org/htrc")),
-  scalaVersion := "2.13.12",
+  scalaVersion := "2.13.14",
   scalacOptions ++= Seq(
     "-feature",
     "-deprecation",
@@ -40,7 +40,7 @@ lazy val ammoniteSettings = Seq(
       val version = scalaBinaryVersion.value match {
         case "2.10" => "1.0.3"
         case "2.11" => "1.6.7"
-        case _ ⇒  "2.5.11"
+        case _ ⇒  "3.0.0-M1-24-26133e66"
       }
       "com.lihaoyi" % "ammonite" % version % Test cross CrossVersion.full
     },
@@ -56,7 +56,7 @@ lazy val ammoniteSettings = Seq(
 lazy val `pairtree-to-text` = (project in file("."))
   .enablePlugins(GitVersioning, GitBranchPrompt, JavaAppPackaging)
   .settings(ammoniteSettings)
-  //.settings(spark("3.3.1"))
+  //.settings(spark("3.5.1"))
   .settings(spark_dev("3.5.1"))
   .settings(
     name := "pairtree-to-text",
@@ -66,17 +66,17 @@ lazy val `pairtree-to-text` = (project in file("."))
       "reformat the text.",
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     libraryDependencies ++= Seq(
-      "org.rogach"                    %% "scallop"              % "5.0.1",
       "org.hathitrust.htrc"           %% "data-model"           % "2.14.0",
       "org.hathitrust.htrc"           %% "spark-utils"          % "1.5.4",
+      "org.rogach"                    %% "scallop"              % "5.1.0",
       "com.github.nscala-time"        %% "nscala-time"          % "2.32.0",
-      "ch.qos.logback"                %  "logback-classic"      % "1.3.11",  // 1.3.x is for Java8, 1.4.x for Java11
-      "org.codehaus.janino"           %  "janino"               % "3.1.11",
-      "org.scalacheck"                %% "scalacheck"           % "1.17.0"      % Test,
-      "org.scalatest"                 %% "scalatest"            % "3.2.17"      % Test,
-      "org.scalatestplus"             %% "scalacheck-1-15"      % "3.2.11.0"    % Test
+      "ch.qos.logback"                %  "logback-classic"      % "1.5.6",
+      "org.codehaus.janino"           %  "janino"               % "3.1.12",
+      "org.scalacheck"                %% "scalacheck"           % "1.18.0"    % Test,
+      "org.scalatest"                 %% "scalatest"            % "3.2.18"    % Test,
+      "org.scalatestplus"             %% "scalacheck-1-15"      % "3.2.11.0"  % Test
     ),
+    evictionErrorLevel := Level.Info,
     Test / parallelExecution := false,
-    Test / fork := true,
-    evictionErrorLevel := Level.Info
+    Test / fork := true
   )
