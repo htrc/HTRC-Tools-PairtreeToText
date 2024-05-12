@@ -66,9 +66,9 @@ lazy val `pairtree-to-text` = (project in file("."))
       "reformat the text.",
     licenses += "Apache2" -> url("http://www.apache.org/licenses/LICENSE-2.0"),
     libraryDependencies ++= Seq(
+      "org.rogach"                    %% "scallop"              % "5.1.0",
       "org.hathitrust.htrc"           %% "data-model"           % "2.14.0",
       "org.hathitrust.htrc"           %% "spark-utils"          % "1.5.4",
-      "org.rogach"                    %% "scallop"              % "5.1.0",
       "com.github.nscala-time"        %% "nscala-time"          % "2.32.0",
       "ch.qos.logback"                %  "logback-classic"      % "1.5.6",
       "org.codehaus.janino"           %  "janino"               % "3.1.12",
@@ -76,7 +76,7 @@ lazy val `pairtree-to-text` = (project in file("."))
       "org.scalatest"                 %% "scalatest"            % "3.2.18"    % Test,
       "org.scalatestplus"             %% "scalacheck-1-15"      % "3.2.11.0"  % Test
     ),
-    evictionErrorLevel := Level.Info,
     Test / parallelExecution := false,
-    Test / fork := true
+    Test / fork := true,
+    evictionErrorLevel := Level.Info
   )
